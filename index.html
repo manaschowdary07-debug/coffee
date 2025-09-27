@@ -8,6 +8,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js"></script>
+
 </head>
 <body>
     <header>
@@ -26,6 +29,7 @@
             </div>
         </nav>
     </header>
+
     <main>
         <section class="hero">
             <div class="hero-text">
@@ -34,23 +38,24 @@
                 <a href="#" class="cta-button">Explore Regions</a>
             </div>
         </section>
+
         <section class="featured-posts">
             <h2>Featured Articles</h2>
             <div class="posts-grid">
                 <article class="post-card">
-                    <img src="images/coffee-beans.jpg" alt="Different types of coffee beans">
+                    <img class="heic-image" data-src="images/coffee-beans.heic" alt="Different types of coffee beans">
                     <h3>Coffee Beans 101: Arabica vs. Robusta</h3>
                     <p>Learn the fundamental differences between the world's two most popular coffee beans.</p>
                     <a href="#">Read More &rarr;</a>
                 </article>
                 <article class="post-card">
-                    <img src="images/french-press.jpg" alt="A french press brewing coffee">
+                    <img class="heic-image" data-src="images/french-press.heic" alt="A french press brewing coffee">
                     <h3>The Perfect French Press</h3>
                     <p>Master the art of immersion brewing with our step-by-step guide to a flawless French Press.</p>
                     <a href="#">Read More &rarr;</a>
                 </article>
                 <article class="post-card">
-                    <img src="images/ethiopian-coffee.jpg" alt="A cup of Ethiopian coffee">
+                    <img class="heic-image" data-src="images/ethiopian-coffee.heic" alt="A cup of Ethiopian coffee">
                     <h3>Exploring Ethiopia: The Birthplace of Coffee</h3>
                     <p>Dive into the vibrant, floral flavors of Ethiopian coffee from Yirgacheffe and Sidamo.</p>
                     <a href="#">Read More &rarr;</a>
@@ -58,10 +63,45 @@
             </div>
         </section>
     </main>
+
     <footer>
         <p>&copy; 2025 Global Coffee Library. All Rights Reserved.</p>
         <p><a href="#">Privacy Policy</a> | <a href="#">About Us</a></p>
     </footer>
+
     <script src="script.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Find all images that need to be converted
+            const heicImages = document.querySelectorAll('img.heic-image');
+
+            heicImages.forEach(img => {
+                const heicUrl = img.dataset.src;
+
+                // Use fetch to get the HEIC file as a blob
+                fetch(heicUrl)
+                    .then((res) => res.blob())
+                    .then((blob) => {
+                        // Show a placeholder or loading indicator if you want
+                        // img.src = "images/loading.gif"; 
+
+                        // Convert the blob to a PNG
+                        return heic2any({
+                            blob,
+                            toType: "image/png",
+                        });
+                    })
+                    .then((conversionResult) => {
+                        // Set the image src to the newly converted image
+                        const imageUrl = URL.createObjectURL(conversionResult);
+                        img.src = imageUrl;
+                    })
+                    .catch((err) => {
+                        console.error("Could not convert HEIC image:", img, err);
+                    });
+            });
+        });
+    </script>
 </body>
-</html>     
+</html>
